@@ -1204,36 +1204,41 @@ window.af=window.jq=jQuery;
                     $.ajax(target).then(function(res){
                         found.html(res);
                         that.showLoading&&that.hideMask();
-                        return that.loadContent("#"+found.prop("id"),newTab,back,transition,anchor);
+                        return that.loadContent("#"+found.prop("id"),newTab,back,transition,anchor); /* fix bug: this 'return' statement cannot stop code running */
                     });
                 }
                 else
                     return that.loadContent("#"+found.prop("id"),newTab,back,transition,anchor);
             }
-            that.showLoading&&that.showMask("Loading Content");
-            $.ajax(target).then(function(res){
-                var $res=$.create("div",{html:res});
-                if(!$res.hasClass(".panel")){
-                    if($(anchor).attr("data-title"))
-                        $res=$res.attr("data-title",anchor.getAttribute("data-title"));
-                    else if($(anchor).attr("title"))
-                        $res=$res.attr("data-title",anchor.getAttribute("title"));
-                    else
-                        $res=$res.attr("data-title",(target));
-                    $res.prop("id",crc);
-                    $res.addClass("panel");
-                }
-                else {
-                    $res=$res.find(".panel");
-                }
-                $(that.activeDiv).closest(".pages").append($res);
-                $res.attr("data-crc",crc);
-                that.showLoading&&that.hideMask();
-                that.loadContent("#"+$res.prop("id"),newTab,back,transition,anchor);
-            }).fail(function(res){
-                that.showLoading&&that.hideMask();
-                console.log("Error with ajax request",res);
-            });
+			else
+			{
+				that.showLoading&&that.showMask("Loading Content");
+				$.ajax(target).then(function(res){
+					var $res=$.create("div",{html:res});
+					if(!$res.hasClass(".panel")){
+						if($(anchor).attr("data-title"))
+							$res=$res.attr("data-title",anchor.getAttribute("data-title"));
+						else if($(anchor).attr("title"))
+							$res=$res.attr("data-title",anchor.getAttribute("title"));
+						else
+							$res=$res.attr("data-title",(target));
+						$res.prop("id",crc);
+						$res.addClass("panel");
+					}
+					else {
+						$res=$res.find(".panel");
+					}
+					$(that.activeDiv).closest(".pages").append($res);
+					$res.attr("data-crc",crc);
+					that.showLoading&&that.hideMask();
+					that.loadContent("#"+$res.prop("id"),newTab,back,transition,anchor);
+				}).fail(function(res){
+					that.showLoading&&that.hideMask();
+					console.log("Error with ajax request",res);
+				});
+				
+			}
+
 
         },
         /**
